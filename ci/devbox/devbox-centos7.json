@@ -1,0 +1,51 @@
+{
+  "variables": {
+    "source_path": "{{ env `HOME`}}/.vagrant.d/boxes/bento-VAGRANTSLASH-centos-7.4/201709.15.0/virtualbox/box.ovf",
+    "ssh_username": "vagrant",
+    "ssh_password": "vagrant",
+    "shutdown_timeout": "10m",
+    "headless": "true",
+    "vm_name": "leeroy-devbox",
+    "vm_cpus": "1",
+    "vm_memory": "2048",
+    "vm_description": "CentOS7.4, leeroy-devbox",
+    "vm_version": "0.1"
+  },
+  "builders": [
+    {
+      "type": "virtualbox-ovf",
+      "source_path": "{{ user `source_path`}}",
+      "ssh_username": "{{ user `ssh_username`}}",
+      "ssh_password": "{{ user `ssh_password`}}",
+      "shutdown_command": "echo '{{ user `ssh_password`}}' | sudo -S -E /sbin/halt -h -p",
+      "shutdown_timeout": "{{ user `shutdown_timeout`}}",
+      "headless": "{{ user `headless`}}",
+      "vm_name": "{{ user `vm_name`}}",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{ .Name}}",
+          "--cpus",
+          "{{ user `vm_cpus` }}"
+        ],
+        [
+          "modifyvm",
+          "{{ .Name}}",
+          "--memory",
+          "{{ user `vm_memory` }}"
+        ]
+      ],
+      "export_opts": [
+        "--vsys",
+        "0",
+        "--description",
+        "{{ user `vm_description`}}",
+        "--version",
+        "{{ user `vm_version`}}"
+      ]
+    }
+  ],
+  "provisioners": [
+  ]
+}
+
