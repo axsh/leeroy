@@ -6,4 +6,5 @@
   roles:
     - jenkins
     - docker
+    - httpd
 
