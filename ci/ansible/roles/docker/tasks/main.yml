@@ -1,0 +1,25 @@
+---
+- name: Install dependency packages
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - yum-utils
+
+- name: Add docker repository
+  shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+  args:
+    chdir: "/etc/yum.repos.d"
+    creates: docker-ce.repo
+
+- name: Install docker-ce
+  yum:
+    name: docker-ce
+    state: present
+
+- name: enabled docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
