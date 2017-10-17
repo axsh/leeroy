@@ -47,23 +47,15 @@ func (w *DropboxWatcher) iterateFolder() (*files.ListFolderResult, error) {
 	for _, entry := range res.Entries {
 		switch f := entry.(type) {
 		case *files.FileMetadata:
-			matched, err := path.Match(w.FolderPath, f.PathLower)
+			matched, err := path.Match(path.Join(w.FolderPath, "*", "rebuild.txt"), f.PathLower)
 			if err != nil {
 				return nil, err
 			}
 			if !matched {
 				continue
 			}
-			log.Print("File:", f.PathLower)
-		case *files.FolderMetadata:
-			matched, err := path.Match(w.FolderPath, f.PathLower)
-			if err != nil {
-				return nil, err
-			}
-			if !matched {
-				continue
-			}
-			log.Print("Folder:", f.PathLower)
+			branch := path.Base(path.Dir(f.PathLower))
+			log.Print("Found rebuild.txt on branch:", branch)
 		}
 	}
 	return res, nil
