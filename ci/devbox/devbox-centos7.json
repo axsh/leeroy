@@ -52,6 +52,25 @@
     }
   ],
   "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "chmod +x {{ .Path }}; echo '{{ user `ssh_password` }}' | {{ .Vars }} sudo -S -E bash '{{ .Path }}'",
+      "inline": [
+        "yum -y update",
+        "yum -y install epel-release",
+        "yum -y install ansible"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "../ansible",
+      "destination": "/tmp/ansible-local"
+    },
+    {
+      "type": "ansible-local",
+      "playbook_file": "../ansible/leeroy-devbox.yml",
+      "staging_directory": "/tmp/ansible-local"
+    }
   ]
 }
 
