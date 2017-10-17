@@ -33,6 +33,12 @@
           "{{ .Name}}",
           "--memory",
           "{{ user `vm_memory` }}"
+        ],
+        [
+          "modifyvm",
+          "{{ .Name}}",
+          "--description",
+          "{{ user `vm_description` }}"
         ]
       ],
       "export_opts": [
