@@ -56,6 +56,18 @@ func (w *DropboxWatcher) iterateFolder() (*files.ListFolderResult, error) {
 			}
 			branch := path.Base(path.Dir(f.PathLower))
 			log.Print("Found rebuild.txt on branch:", branch)
+
+			_, err = w.filesApi.DeleteV2(files.NewDeleteArg(f.PathLower))
+			if err != nil {
+				switch e := err.(type) {
+				case files.DeleteAPIError:
+					log.Print("Dropbox API Error: ", e)
+					continue
+				default:
+					return nil, err
+				}
+			}
+			log.Print("Removed rebuild.txt on branch: ", branch)
 		}
 	}
 	return res, nil
