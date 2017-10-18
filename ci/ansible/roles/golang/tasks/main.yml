@@ -1,0 +1,19 @@
+---
+- name: Install golang
+  unarchive:
+    src: https://storage.googleapis.com/golang/go1.9.1.linux-amd64.tar.gz
+    dest: /usr/local
+    remote_src: yes
+
+- name: Write GOPATH in ~/.bashrc
+  blockinfile:
+    backup: yes
+    dest: /home/vagrant/.bashrc
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+    block: |
+      GOPATH=/var/tmp/go
+      export GOPATH
+      PATH=/usr/local/go/bin:$PATH:$GOPATH/bin
+

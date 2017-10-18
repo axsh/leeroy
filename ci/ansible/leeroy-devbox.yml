@@ -7,4 +7,5 @@
     - jenkins
     - docker
     - httpd
+    - golang
 
