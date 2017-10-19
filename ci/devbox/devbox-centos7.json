@@ -9,7 +9,8 @@
     "vm_cpus": "1",
     "vm_memory": "2048",
     "vm_description": "CentOS7.4, leeroy-devbox",
-    "vm_version": "0.1"
+    "vm_version": "0.1",
+    "repository_url": ""
   },
   "builders": [
     {
@@ -69,6 +70,9 @@
     {
       "type": "ansible-local",
       "playbook_file": "../ansible/leeroy-devbox.yml",
+      "extra_arguments": [
+        "--extra-vars \"username={{ user `ssh_username` }} repository_url={{ user `repository_url` }}\""
+      ],
       "staging_directory": "/tmp/ansible-local"
     }
   ]
