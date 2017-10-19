@@ -2,6 +2,7 @@
 
 echo "Install development tools."
 yum groupinstall -y "Development Tools"
+yum install -y rpm-build rpmdevtools
 
 echo "Install golang."
 # Requires to export PATH=/usr/local/go/bin:$PATH
