@@ -23,3 +23,17 @@
     state: started
     enabled: yes
 
+- name: Add docker exec user
+  user:
+    name: "{{ username }}"
+    groups: docker
+    append: yes
+
+- name: Create docker shared folder
+  file:
+    path: "/mnt/artifact"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0755
+
