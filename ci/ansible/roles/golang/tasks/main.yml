@@ -17,3 +17,11 @@
       export GOPATH
       PATH=/usr/local/go/bin:$PATH:$GOPATH/bin
 
+- name: Create golang work directory
+  file:
+    path: "/var/tmp/go/src/github.com/axsh"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0755
+
