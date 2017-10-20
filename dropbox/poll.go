@@ -24,20 +24,31 @@ func newNoAuthClient() *http.Client {
 	}
 }
 
-type DropboxWatcher struct {
-	FolderPath string
-	filesApi   files.Client
+// Configuration parameters for leeroy.json
+type Config struct {
+	// Dropbox folder path to watch
+	FolderPath string `json:folder_path`
+	// Oauth2 access token
+	Token string `json:"token"`
 }
 
-func New(folderPath string, config dropbox.Config) *DropboxWatcher {
-	return &DropboxWatcher{
-		FolderPath: folderPath,
-		filesApi:   files.New(config),
+type DropboxWatcher struct {
+	config   *Config
+	filesApi files.Client
+}
+
+func NewWatcher(config *Config) (*DropboxWatcher, error) {
+	c := dropbox.Config{
+		Token: config.Token,
 	}
+	return &DropboxWatcher{
+		config:   config,
+		filesApi: files.New(c),
+	}, nil
 }
 
 func (w *DropboxWatcher) iterateFolder() (*files.ListFolderResult, error) {
-	req := files.NewListFolderArg(w.FolderPath)
+	req := files.NewListFolderArg(w.config.FolderPath)
 	req.Recursive = true
 
 	res, err := w.filesApi.ListFolder(req)
@@ -47,7 +58,7 @@ func (w *DropboxWatcher) iterateFolder() (*files.ListFolderResult, error) {
 	for _, entry := range res.Entries {
 		switch f := entry.(type) {
 		case *files.FileMetadata:
-			matched, err := path.Match(path.Join(w.FolderPath, "*", "rebuild.txt"), f.PathLower)
+			matched, err := path.Match(path.Join(w.config.FolderPath, "*", "rebuild.txt"), f.PathLower)
 			if err != nil {
 				return nil, err
 			}
@@ -79,7 +90,7 @@ func (w *DropboxWatcher) PollFolder() error {
 		return err
 	}
 	cursor := res.Cursor
-	log.Printf("Start to poll '%s'", w.FolderPath)
+	log.Printf("Start to poll '%s'", w.config.FolderPath)
 	for {
 		noauthdbx := files.New(dropbox.Config{Client: newNoAuthClient()})
 		req := files.NewListFolderLongpollArg(cursor)
