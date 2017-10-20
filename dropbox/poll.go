@@ -1,6 +1,7 @@
 package dropbox
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"path"
@@ -41,9 +42,23 @@ func NewWatcher(config *Config) (*DropboxWatcher, error) {
 	c := dropbox.Config{
 		Token: config.Token,
 	}
+	dbx := files.New(c)
+	req := files.NewGetMetadataArg(config.FolderPath)
+	res, err := dbx.GetMetadata(req)
+	if err != nil {
+		// caused authentication error, etc.
+		return nil, err
+	}
+	switch res.(type) {
+	case *files.FolderMetadata:
+		// TODO: check writable permission
+	default:
+		return nil, fmt.Errorf("'%s' is not folder", config.FolderPath)
+	}
+
 	return &DropboxWatcher{
 		config:   config,
-		filesApi: files.New(c),
+		filesApi: dbx,
 	}, nil
 }
 
