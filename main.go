@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/docker/leeroy/dropbox"
 	"github.com/docker/leeroy/jenkins"
 )
 
@@ -32,13 +33,14 @@ var (
 
 // Config describes the leeroy config file
 type Config struct {
-	Jenkins      jenkins.Client `json:"jenkins"`
-	BuildCommits string         `json:"build_commits"`
-	GHToken      string         `json:"github_token"`
-	GHUser       string         `json:"github_user"`
-	Builds       []Build        `json:"builds"`
-	User         string         `json:"user"`
-	Pass         string         `json:"pass"`
+	Jenkins      jenkins.Client  `json:"jenkins"`
+	BuildCommits string          `json:"build_commits"`
+	GHToken      string          `json:"github_token"`
+	GHUser       string          `json:"github_user"`
+	Builds       []Build         `json:"builds"`
+	User         string          `json:"user"`
+	Pass         string          `json:"pass"`
+	Dropbox      *dropbox.Config `json:"dropbox`
 }
 
 // Build describes the paramaters for a build
@@ -89,6 +91,19 @@ func main() {
 		return
 	}
 
+	if config.Dropbox != nil {
+		w, err := dropbox.NewWatcher(config.Dropbox)
+		if err != nil {
+			logrus.WithError(err).Fatal("Dropbox watcher")
+		}
+		go func() {
+			logrus.Info("Start to watch Dropbox folder: ", config.Dropbox.FolderPath)
+			if err := w.PollFolder(); err != nil {
+				logrus.WithError(err).Error("Dropbox watcher failed to poll")
+			}
+			logrus.Info("Stopped to watch Dropbox folder: ", config.Dropbox.FolderPath)
+		}()
+	}
 	// create mux server
 	mux := http.NewServeMux()
 

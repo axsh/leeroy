@@ -59,7 +59,13 @@ Below is a sample leeroy config file:
 
     // Basic Auth for endoints
     "user": "USER",
-    "pass": "PASS"
+    "pass": "PASS",
+
+    // Dropbox configuration
+    "dropbox": {
+        "folder_path": "/buildlog",
+        "token": "YOUR_DROPBOX_TOKEN"
+    }
 }
 ```
 
