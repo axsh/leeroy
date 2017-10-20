@@ -27,7 +27,7 @@ func newNoAuthClient() *http.Client {
 // Configuration parameters for leeroy.json
 type Config struct {
 	// Dropbox folder path to watch
-	FolderPath string `json:folder_path`
+	FolderPath string `json:"folder_path"`
 	// Oauth2 access token
 	Token string `json:"token"`
 }
