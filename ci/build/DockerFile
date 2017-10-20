@@ -1,0 +1,14 @@
+FROM centos:7
+ENV GOPATH=/var/tmp/go
+ENV PATH=/usr/local/go/bin:$PATH:$GOPATH/bin
+
+COPY ci/devbox/fastestmirror.conf /etc/yum/pluginconf.d/
+
+# WORKDIR creates non-exisiting path
+WORKDIR $GOPATH/src/github.com/axsh/leeroy
+
+# COPY workspace to WORKDIR
+COPY . .
+
+RUN ci/devbox/scripts/devtools.sh
+
