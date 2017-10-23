@@ -33,7 +33,7 @@ type Response struct {
 // Build describes a jenkins build
 type Build struct {
 	Number     int             `json:"number"`
-	URL        string          `json:"full_url"`
+	URL        string          `json:"url"`
 	Phase      string          `json:"phase"`
 	Status     string          `json:"status"`
 	Parameters BuildParameters `json:"parameters"`

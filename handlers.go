@@ -34,7 +34,7 @@ func jenkinsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logrus.Infof("Received Jenkins notification for %s %d (%s): %s", j.Name, j.Build.Number, j.Build.URL, j.Build.Phase)
+	logrus.Infof("Received Jenkins notification for %s %d (%s): %s", j.Name, j.Build.Number, config.Jenkins.Baseurl+"/"+j.Build.URL, j.Build.Phase)
 
 	// if the phase is not started or completed
 	// we don't care
@@ -77,7 +77,7 @@ func jenkinsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// update the github status
-	if err := config.updateGithubStatus(j.Build.Parameters.GitBaseRepo, build.Context, j.Build.Parameters.GitSha, state, desc, j.Build.URL+"console"); err != nil {
+	if err := config.updateGithubStatus(j.Build.Parameters.GitBaseRepo, build.Context, j.Build.Parameters.GitSha, state, desc, config.Jenkins.Baseurl+"/"+j.Build.URL+"console"); err != nil {
 		logrus.Error(err)
 		return
 	}
