@@ -9,7 +9,7 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/docker/leeroy/jenkins"
+	"github.com/axsh/leeroy/jenkins"
 )
 
 const (
