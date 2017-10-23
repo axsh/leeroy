@@ -9,8 +9,8 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/crosbymichael/octokat"
-	"github.com/docker/leeroy/github"
-	"github.com/docker/leeroy/jenkins"
+	"github.com/axsh/leeroy/github"
+	"github.com/axsh/leeroy/jenkins"
 	"github.com/pkg/errors"
 )
 
