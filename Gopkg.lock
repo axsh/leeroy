@@ -15,6 +15,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/docker/leeroy"
+  packages = ["github","jenkins"]
+  revision = "e1d2556ecf85d11d5b739b300928fcae641c51aa"
+
+[[projects]]
+  branch = "master"
   name = "github.com/google/btree"
   packages = ["."]
   revision = "316fb6d3f031ae8f4d457c6c5186b9e3ded70435"
@@ -58,6 +64,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4d5b77a917c22c93c34924d8a5521898b40334d242eab8cd35054041496d1262"
+  inputs-digest = "30edb369c80234078321e00e7550cd8572a0d4f76d6c8f9f6c0811201c580a97"
   solver-name = "gps-cdcl"
   solver-version = 1
