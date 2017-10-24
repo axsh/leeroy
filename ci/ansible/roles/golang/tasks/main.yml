@@ -8,9 +8,9 @@
 - name: Write GOPATH in ~/.bashrc
   blockinfile:
     backup: yes
-    dest: /home/vagrant/.bashrc
-    owner: vagrant
-    group: vagrant
+    dest: "/home/{{ username }}/.bashrc"
+    owner: "{{ username }}"
+    group: "{{ username }}"
     mode: 0644
     block: |
       GOPATH=/var/tmp/go
