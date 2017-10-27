@@ -15,9 +15,33 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/dropbox/godropbox"
+  packages = ["container/set"]
+  revision = "cbaa11a299645812c97079a5f6621c1301ee98c6"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/golang/protobuf"
+  packages = ["proto"]
+  revision = "1643683e1b54a9e88ad26d98f81400c8c9d9f4f9"
+
+[[projects]]
+  branch = "master"
   name = "github.com/google/btree"
   packages = ["."]
   revision = "316fb6d3f031ae8f4d457c6c5186b9e3ded70435"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/google/go-github"
+  packages = ["github"]
+  revision = "a021c14a5f1960591b0e1773a4a2ef8257ec93b8"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/google/go-querystring"
+  packages = ["query"]
+  revision = "53e6ce116135b80d037921a7fdd5138cf32d7a8a"
 
 [[projects]]
   branch = "master"
@@ -51,13 +75,31 @@
 
 [[projects]]
   branch = "master"
+  name = "golang.org/x/net"
+  packages = ["context","context/ctxhttp"]
+  revision = "cd69bc3fc700721b709c3a59e16e24c67b58f6ff"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/oauth2"
+  packages = [".","internal"]
+  revision = "bb50c06baba3d0c76f9d125c0719093e315b5b44"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
   revision = "5513e650ab47a692d3a036d49be8fa52ddd09b65"
 
+[[projects]]
+  name = "google.golang.org/appengine"
+  packages = ["internal","internal/base","internal/datastore","internal/log","internal/remote_api","internal/urlfetch","urlfetch"]
+  revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
+  version = "v1.0.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4d5b77a917c22c93c34924d8a5521898b40334d242eab8cd35054041496d1262"
+  inputs-digest = "ae3a3c8a5e5501c0ef5e777ebdf97810df774df4791c50c3ebb2f05f16332731"
   solver-name = "gps-cdcl"
   solver-version = 1
