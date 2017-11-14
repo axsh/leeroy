@@ -1,0 +1,11 @@
+---
+- name: Setup leeroy-devbox
+  hosts: localhost
+  connection: local
+  become: true
+  roles:
+    - jenkins
+    - docker
+    - httpd
+    - golang
+

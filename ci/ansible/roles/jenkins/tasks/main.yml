@@ -1,0 +1,163 @@
+---
+- name: Install dependency packages
+  yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - yum-utils
+    - java-1.8.0-openjdk
+    - git
+
+- name: Add jenkins repo
+  shell: "yum-config-manager --add-repo http://pkg.jenkins-ci.org/redhat/jenkins.repo"
+  args:
+    chdir: "/etc/yum.repos.d"
+    creates: jenkins.repo
+
+- name: Install jenkins-ci.org key
+  rpm_key:
+    key: "http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key"
+
+- name: Install jenkins
+  yum:
+    name: jenkins
+    state: present
+
+- name: Disable jenkins install setup wizard
+  lineinfile:
+    dest: /etc/sysconfig/jenkins
+    owner: root
+    group: root
+    mode: 0600
+    state: present
+    regexp: '^JENKINS_JAVA_OPTIONS='
+    line: 'JENKINS_JAVA_OPTIONS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+
+- name: Disable jenkins security
+  copy:
+    src: jenkins.config.xml
+    dest: /var/lib/jenkins/config.xml
+    owner: jenkins
+    group: jenkins
+    mode: 0644
+
+- name: Modify jenkins user shell
+  command: usermod -s /bin/bash jenkins
+
+- name: Create .ssh directory
+  file:
+    path: /var/lib/jenkins/.ssh
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: 0700
+
+- name: Create ssh config
+  copy:
+    src: ssh.config
+    dest: /var/lib/jenkins/.ssh/config
+    owner: jenkins
+    group: jenkins
+    mode: 0644
+
+- name: Add jenkins user to sudoers
+  lineinfile:
+    dest: /etc/sudoers.d/{{item.user}}
+    owner: root
+    group: root
+    mode: 0440
+    state: present
+    create: yes
+    line: "{{item.user}} {{item.role}}"
+    validate: 'visudo -cf %s'
+  with_items:
+    - { user: "jenkins", role: "ALL = (ALL) NOPASSWD: ALL" }
+
+- name: Initialize jenkins fact
+  set_fact:
+    jenkins_restart_required: yes
+
+- name: Start jenkins service
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
+  when: jenkins_restart_required
+
+- name: Wait for jenkins startup
+  uri:
+    url: http://localhost:8080
+    status_code: 200
+    timeout: 5
+  register: jenkins_service_status
+  retries: 60
+  delay: 5
+  until: >
+    'status' in jenkins_service_status and jenkins_service_status['status'] == 200
+  when: jenkins_restart_required
+
+- name: Install jenkins plugins
+  jenkins_plugin:
+    name: "{{item}}"
+    state: present
+    timeout: 300
+  with_items:
+    - dashboard-view
+    - cloudbees-folder
+    - antisamy-markup-formatter
+    - build-name-setter
+    - build-timeout
+    - config-file-provider
+    - credentials-binding
+    - embeddable-build-status
+    - rebuild
+    - ssh-agent
+    - throttle-concurrents
+    - timestamper
+    - ws-cleanup
+    - ant
+    - gradle
+    - msbuild
+    - nodejs
+    - checkstyle
+    - cobertura
+    - htmlpublisher
+    - junit
+    - warnings
+    - xunit
+    - workflow-aggregator
+    - github-branch-source
+    - pipeline-github-lib
+    - pipeline-stage-view
+    - build-pipeline-plugin
+    - conditional-buildstep
+    - jenkins-multijob-plugin
+    - parameterized-trigger
+    - copyartifact
+    - bitbucket
+    - clearcase
+    - cvs
+    - git
+    - git-parameter
+    - github
+    - gitlab-plugin
+    - p4
+    - repo
+    - subversion
+    - teamconcert
+    - tfs
+    - matrix-project
+    - ssh-slaves
+    - windows-slaves
+    - matrix-auth
+    - pam-auth
+    - ldap
+    - role-strategy
+    - active-directory
+    - email-ext
+    - emailext-template
+    - mailer
+    - publish-over-ssh
+    - ssh
+    - blueocean
+
