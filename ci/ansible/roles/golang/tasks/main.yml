@@ -1,0 +1,27 @@
+---
+- name: Install golang
+  unarchive:
+    src: https://storage.googleapis.com/golang/go1.9.1.linux-amd64.tar.gz
+    dest: /usr/local
+    remote_src: yes
+
+- name: Write GOPATH in ~/.bashrc
+  blockinfile:
+    backup: yes
+    dest: "/home/{{ username }}/.bashrc"
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0644
+    block: |
+      GOPATH=/var/tmp/go
+      export GOPATH
+      PATH=/usr/local/go/bin:$PATH:$GOPATH/bin
+
+- name: Create golang work directory
+  file:
+    path: "/var/tmp/go/src/github.com/axsh"
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0755
+

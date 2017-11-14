@@ -8,6 +8,12 @@
   version = "v1.0.3"
 
 [[projects]]
+  branch = "axsh"
+  name = "github.com/axsh/leeroy"
+  packages = ["github","jenkins"]
+  revision = "6d64717b428d62dc707612dd0621efad1b4565a7"
+
+[[projects]]
   branch = "master"
   name = "github.com/crosbymichael/octokat"
   packages = ["."]
@@ -100,6 +106,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ae3a3c8a5e5501c0ef5e777ebdf97810df774df4791c50c3ebb2f05f16332731"
+  inputs-digest = "2dff6be9dbebf03aba18a757dc4a1a3bef3aa0e7ef0dd141334d557ef66a74a3"
   solver-name = "gps-cdcl"
   solver-version = 1

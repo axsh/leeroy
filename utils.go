@@ -9,7 +9,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/crosbymichael/octokat"
-	"github.com/docker/leeroy/github"
+	"github.com/axsh/leeroy/github"
 )
 
 // Commit describes information in a commit
