@@ -40,8 +40,7 @@ func TestGithubWatcher_pollOneshot(t *testing.T) {
 func TestGithubWatcher_PollRepository(t *testing.T) {
 	cfg := configTestEnv(t)
 	w := NewGithubWatcher(cfg.Token)
-	stopCh := make(chan interface{}, 1)
-	ch, errCh := w.PollRepository("axsh", "leeroy", stopCh)
+	ch, errCh := w.PollRepository("axsh", "leeroy")
 	time.Sleep(1 * time.Second)
 	passed := false
 	select {
@@ -53,7 +52,7 @@ func TestGithubWatcher_PollRepository(t *testing.T) {
 	if !passed {
 		t.Error("Never received the response from Github")
 	}
-	stopCh <- struct{}{}
+	w.Stop()
 
 	select {
 	case <-ch:

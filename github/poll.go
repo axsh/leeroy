@@ -19,6 +19,7 @@ type GithubWatcher struct {
 	rootCtx  context.Context
 	client   *github.Client
 	lastRefs map[string]*github.Reference
+	stopCh   chan interface{}
 }
 
 func NewGithubWatcher(ghToken string) *GithubWatcher {
@@ -32,20 +33,28 @@ func NewGithubWatcher(ghToken string) *GithubWatcher {
 		rootCtx:  ctx,
 		client:   client,
 		lastRefs: make(map[string]*github.Reference),
+		stopCh:   make(chan interface{}, 1),
 	}
 }
 
-func (w *GithubWatcher) PollRepository(owner, repo string, stopCh <-chan interface{}) (<-chan *RepoChange, <-chan error) {
+func (w *GithubWatcher) Stop() {
+	w.stopCh <- struct{}{}
+}
+
+func (w *GithubWatcher) PollRepository(owner, repo string) (<-chan *RepoChange, <-chan error) {
 	ch := make(chan *RepoChange, 1)
 	errCh := make(chan error, 1)
 	go func() {
 		for {
 			select {
-			case <-stopCh:
+			case <-w.stopCh:
 				close(ch)
 				return
 			default:
 				err := w.pollOneshot(owner, repo, func(n, r, u []*github.Reference) {
+					if len(n) == 0 && len(r) == 0 && len(u) == 0 {
+						return
+					}
 					ch <- &RepoChange{
 						NewRefs:     n,
 						RemovedRefs: r,
