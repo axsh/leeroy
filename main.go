@@ -39,7 +39,7 @@ type Config struct {
 	Builds       []Build        `json:"builds"`
 	User         string         `json:"user"`
 	Pass         string         `json:"pass"`
-	Repository   Repository     `json:"repoistory"`
+	Repository   *Repository    `json:"repository"`
 }
 
 // Build describes the paramaters for a build
