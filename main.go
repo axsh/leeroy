@@ -171,6 +171,14 @@ func main() {
 		Handler: mux,
 	}
 
+	go func() {
+		stopCh := make(chan os.Signal, 1)
+		signal.Notify(stopCh, syscall.SIGTERM, syscall.SIGINT)
+
+		<-stopCh
+		server.Close()
+	}()
+
 	logrus.Printf("Starting server on port %q", port)
 	if certFile != "" && keyFile != "" {
 		logrus.Fatal(server.ListenAndServeTLS(certFile, keyFile))
