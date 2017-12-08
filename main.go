@@ -7,8 +7,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/signal"
+	"strings"
+	"syscall"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/axsh/leeroy/github"
 	"github.com/axsh/leeroy/jenkins"
 )
 
@@ -93,6 +97,51 @@ func main() {
 	if err := json.Unmarshal(c, &config); err != nil {
 		logrus.Errorf("error parsing config file as json: %v", err)
 		return
+	}
+
+	if config.Repository != nil {
+		stopCh := make(chan os.Signal, 1)
+		signal.Notify(stopCh, syscall.SIGTERM, syscall.SIGINT)
+
+		w := github.NewGithubWatcher(config.GHToken)
+		slug := strings.SplitN(config.Repository.Repo, "/", 2)
+		ch, errCh := w.PollRepository(slug[0], slug[1])
+		logrus.Info("Started repository poller: ", config.Repository.Repo)
+
+		go func(repo *Repository) {
+			defer func() {
+				logrus.Info("Halting repository poller: ", w)
+				w.Stop()
+			}()
+			for {
+				select {
+				case changes := <-ch:
+					for _, ref := range changes.NewRefs {
+						if !strings.HasPrefix(*ref.Ref, "refs/heads/") {
+							continue
+						}
+						refabbrev := strings.TrimPrefix(*ref.Ref, "refs/heads/")
+						if err := config.Jenkins.BuildPipeline(repo.Job, 0, refabbrev); err != nil {
+							logrus.Error("Failed to send Jenkins build request:", err)
+						}
+					}
+					for _, ref := range changes.UpdatedRefs {
+						if !strings.HasPrefix(*ref.Ref, "refs/heads/") {
+							continue
+						}
+						refabbrev := strings.TrimPrefix(*ref.Ref, "refs/heads/")
+						if err := config.Jenkins.BuildPipeline(repo.Job, 0, refabbrev); err != nil {
+							logrus.Error("Failed to send Jenkins build request:", err)
+						}
+					}
+				case err := <-errCh:
+					logrus.Error("Repository poller failed:", err)
+					return
+				case <-stopCh:
+					return
+				}
+			}
+		}(config.Repository)
 	}
 
 	// create mux server
