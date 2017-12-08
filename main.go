@@ -39,6 +39,7 @@ type Config struct {
 	Builds       []Build        `json:"builds"`
 	User         string         `json:"user"`
 	Pass         string         `json:"pass"`
+	Repository   *Repository    `json:"repository"`
 }
 
 // Build describes the paramaters for a build
@@ -49,6 +50,11 @@ type Build struct {
 	Custom       bool   `json:"custom"`
 	HandleIssues bool   `json:"handle_issues"`
 	IsPipeline   bool   `json:"is_pipeline"`
+}
+
+type Repository struct {
+	Repo string `json:"github_repo"`
+	Job  string `json:"jenkins_job_name"`
 }
 
 func init() {
